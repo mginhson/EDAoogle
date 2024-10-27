@@ -10,10 +10,28 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
-
+#include <chrono>
 #include "HttpRequestHandler.h"
-
+#include <sqlite3.h>
 using namespace std;
+typedef struct {
+    char* path;
+    char* title;
+    char* body;
+} Page_t;
+
+int selectPages(void* pointer, int columnSize, char** columns, char**columnsName) {
+    for (int i = 0; i < columnSize; i++) {
+        
+        static_cast<vector<Page_t>*>(pointer)->push_back({
+            columns[0], // ¿Path?
+            columns[1], // ¿Title?
+            columns[2], // ¿Body?
+        });
+    }
+    return 0;
+}
+
 
 HttpRequestHandler::HttpRequestHandler(string homePath)
 {
@@ -91,11 +109,42 @@ bool HttpRequestHandler::handleRequest(string url,
             </form>\
         </div>\
         ");
-
+        
         // YOUR JOB: fill in results
         float searchTime = 0.1F;
         vector<string> results;
 
+        char* databaseFile = "index.db";
+        sqlite3* database;
+        char* databaseErrorMessage;
+        
+        // Open database file
+        cout << "Opening database..." << endl;
+        if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
+        {
+            cout << "Can't open database: " << sqlite3_errmsg(database) << endl;
+
+            return 1;
+        }
+        auto start = chrono::system_clock::now();
+        string searchArgument = "SELECT title, url bm25(nombre_base_de_datos) AS rank FROM libros WHERE libros MATCH '" + searchString + "' ORDER BY rank;";
+        auto end = chrono::system_clock::now();
+
+        chrono::duration<long double> duration = end - start;
+        searchTime = duration.count();
+        vector <Page_t> queryData;
+            // pop_back();
+        if(sqlite3_exec(database,
+            searchArgument.c_str(),
+            selectPages,
+            &queryData,
+            &databaseErrorMessage) != SQLITE_OK)
+            cout << "Error: " << sqlite3_errmsg(database) << endl;
+        int i = 0;
+        for (auto& page : queryData) {
+            results[i] = queryData[i].path;
+            i++;
+        }
         // Print search results
         responseString += "<div class=\"results\">" + to_string(results.size()) +
                           " results (" + to_string(searchTime) + " seconds):</div>";
