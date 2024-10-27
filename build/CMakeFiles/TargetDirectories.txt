@@ -1,0 +1,4 @@
+/home/mginhson/Desktop/EDA/EDAoogle/build/CMakeFiles/edahttpd.dir
+/home/mginhson/Desktop/EDA/EDAoogle/build/CMakeFiles/mkindex.dir
+/home/mginhson/Desktop/EDA/EDAoogle/build/CMakeFiles/edit_cache.dir
+/home/mginhson/Desktop/EDA/EDAoogle/build/CMakeFiles/rebuild_cache.dir

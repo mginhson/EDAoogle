@@ -59,6 +59,8 @@ int main(int argc, const char *argv[])
         char value;
         cin >> value;
 
+        
+
         cout << "Stopping server..." << endl;
     }
 }

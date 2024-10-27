@@ -38,6 +38,10 @@ int main(int argc,
     sqlite3 *database;
     char *databaseErrorMessage;
 
+    
+
+
+    /*
     // Open database file
     cout << "Opening database..." << endl;
     if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
@@ -112,4 +116,7 @@ int main(int argc,
     // Close database
     cout << "Closing database..." << endl;
     sqlite3_close(database);
+
+    */
 }
+
