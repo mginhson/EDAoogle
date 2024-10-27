@@ -27,6 +27,7 @@ bool CommandLineParser::hasOption(const string &name)
     return false;
 }
 
+//j
 string CommandLineParser::getOption(const string &name)
 {
     for (auto i = arguments.begin(); i != arguments.end(); i++)

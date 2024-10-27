@@ -9,7 +9,9 @@
 
 #include <iostream>
 #include <string>
-
+#include <vector>
+#include <filesystem>
+#include <fstream>
 #include <sqlite3.h>
 
 using namespace std;
@@ -38,9 +40,23 @@ int main(int argc,
     sqlite3 *database;
     char *databaseErrorMessage;
 
+    std::ifstream file;
     
-
-
+    file.open("/home/mginhson/Desktop/EDA/EDAoogle/www/wiki/100_metros.html");
+    if (!file.is_open())
+        std::cout << "error" << std::endl;
+    
+    
+    
+    
+    
+    
+    while(file.peek() != EOF)
+    {
+        
+        
+    }
+    
     /*
     // Open database file
     cout << "Opening database..." << endl;
