@@ -7,12 +7,15 @@
  * @copyright Copyright (c) 2022-2024 Marc S. Ressl
  */
 
+
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <filesystem>
 #include <fstream>
 #include <sqlite3.h>
+#include <sqlite3-vcpkg-config.h>
 
 using namespace std;
 
@@ -40,23 +43,57 @@ int main(int argc,
     sqlite3 *database;
     char *databaseErrorMessage;
 
-    std::ifstream file;
-    
-    file.open("/home/mginhson/Desktop/EDA/EDAoogle/www/wiki/100_metros.html");
-    if (!file.is_open())
-        std::cout << "error" << std::endl;
-    
-    
-    
-    
-    
-    
-    while(file.peek() != EOF)
+
+    if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
     {
+        cout << "Failure on sqlite_open()" << endl;
+        return 1;
+    }
+
+
+    if (sqlite3_exec(database,
+        "CREATE VIRTUAL TABLE prettyEyes USING fts5(title, path, body);",
+        NULL,
+        0,
+        &databaseErrorMessage) != SQLITE_OK)
+    {
+        cout << sqlite3_errmsg(database) << endl;
+        return 1;
+    }
+
+
+    std::ifstream file;
+    std::string pathName = "/home/mginhson/Desktop/EDA/EDAoogle/www/wiki"; 
+    std::string reader, body, fileName;
+
+
+    for (const auto & entry : filesystem::directory_iterator(pathName))
+    {
+        reader.clear();
+        body.clear();
+
+       
+        fileName = entry.path();
+        cout << fileName << endl;
+        file.open(entry.path());
         
+        
+        
+        while(!file.eof())
+        {
+            getline(file,reader,'<');
+            body.append(reader);
+            getline(file,reader,'>');
+        }
+        
+
+        file.close();
         
     }
     
+    
+
+  
     /*
     // Open database file
     cout << "Opening database..." << endl;
