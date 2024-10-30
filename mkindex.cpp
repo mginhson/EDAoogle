@@ -4,9 +4,8 @@
  * @brief Makes a database index
  * @version 0.3
  *
- * @copyright Copyright (c) 2022-2024 Marc S. Ressl
+ * @copyright Copyright (c) 2022-2024 Marc S. Ressl.
  */
-
 
 
 #include <iostream>
@@ -44,12 +43,14 @@ int main(int argc,
     char *databaseErrorMessage;
 
 
+    
     if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
     {
         cout << "Failure on sqlite_open()" << endl;
         return 1;
     }
-
+    //sqlite3_enable_load_extension(database, 0);
+    
 
     if (sqlite3_exec(database,
         "CREATE VIRTUAL TABLE prettyEyes USING fts5(title, path, body);",
@@ -61,6 +62,7 @@ int main(int argc,
         return 1;
     }
 
+    cout << "working" << endl;
 
     std::ifstream file;
     std::string pathName = "/home/mginhson/Desktop/EDA/EDAoogle/www/wiki"; 
