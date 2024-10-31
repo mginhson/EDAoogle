@@ -1,27 +1,27 @@
 [
 {
   "directory": "/home/mginhson/Desktop/EDA/EDAoogle/build",
-  "command": "/usr/bin/c++  -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/edahttpd.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/edahttpd.cpp",
+  "command": "/usr/bin/c++ -DSQLITE_ENABLE_FTS5 -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/edahttpd.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/edahttpd.cpp",
   "file": "/home/mginhson/Desktop/EDA/EDAoogle/edahttpd.cpp"
 },
 {
   "directory": "/home/mginhson/Desktop/EDA/EDAoogle/build",
-  "command": "/usr/bin/c++  -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/CommandLineParser.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/CommandLineParser.cpp",
+  "command": "/usr/bin/c++ -DSQLITE_ENABLE_FTS5 -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/CommandLineParser.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/CommandLineParser.cpp",
   "file": "/home/mginhson/Desktop/EDA/EDAoogle/CommandLineParser.cpp"
 },
 {
   "directory": "/home/mginhson/Desktop/EDA/EDAoogle/build",
-  "command": "/usr/bin/c++  -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/HttpServer.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/HttpServer.cpp",
+  "command": "/usr/bin/c++ -DSQLITE_ENABLE_FTS5 -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/HttpServer.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/HttpServer.cpp",
   "file": "/home/mginhson/Desktop/EDA/EDAoogle/HttpServer.cpp"
 },
 {
   "directory": "/home/mginhson/Desktop/EDA/EDAoogle/build",
-  "command": "/usr/bin/c++  -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/HttpRequestHandler.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/HttpRequestHandler.cpp",
+  "command": "/usr/bin/c++ -DSQLITE_ENABLE_FTS5 -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/edahttpd.dir/HttpRequestHandler.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/HttpRequestHandler.cpp",
   "file": "/home/mginhson/Desktop/EDA/EDAoogle/HttpRequestHandler.cpp"
 },
 {
   "directory": "/home/mginhson/Desktop/EDA/EDAoogle/build",
-  "command": "/usr/bin/c++  -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/mkindex.dir/mkindex.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/mkindex.cpp",
+  "command": "/usr/bin/c++ -DSQLITE_ENABLE_FTS5 -isystem /home/mginhson/dev/vcpkg/installed/x64-linux/include -g -o CMakeFiles/mkindex.dir/mkindex.cpp.o -c /home/mginhson/Desktop/EDA/EDAoogle/mkindex.cpp",
   "file": "/home/mginhson/Desktop/EDA/EDAoogle/mkindex.cpp"
 }
 ]

@@ -208,4 +208,6 @@ CMakeFiles/edahttpd.dir/HttpRequestHandler.cpp.o: \
  /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
- /usr/include/c++/11/bits/vector.tcc
+ /usr/include/c++/11/bits/vector.tcc \
+ /home/mginhson/dev/vcpkg/installed/x64-linux/include/sqlite3.h \
+ /home/mginhson/dev/vcpkg/installed/x64-linux/include/sqlite3-vcpkg-config.h

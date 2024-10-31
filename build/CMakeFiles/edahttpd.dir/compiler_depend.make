@@ -418,7 +418,9 @@ CMakeFiles/edahttpd.dir/HttpRequestHandler.cpp.o: ../HttpRequestHandler.cpp \
   /usr/include/c++/11/bits/stl_uninitialized.h \
   /usr/include/c++/11/bits/stl_vector.h \
   /usr/include/c++/11/bits/stl_bvector.h \
-  /usr/include/c++/11/bits/vector.tcc
+  /usr/include/c++/11/bits/vector.tcc \
+  /home/mginhson/dev/vcpkg/installed/x64-linux/include/sqlite3.h \
+  /home/mginhson/dev/vcpkg/installed/x64-linux/include/sqlite3-vcpkg-config.h
 
 CMakeFiles/edahttpd.dir/HttpServer.cpp.o: ../HttpServer.cpp \
   /usr/include/stdc-predef.h \
@@ -850,6 +852,10 @@ CMakeFiles/edahttpd.dir/edahttpd.cpp.o: ../edahttpd.cpp \
 
 
 ../HttpServer.cpp:
+
+/home/mginhson/dev/vcpkg/installed/x64-linux/include/sqlite3-vcpkg-config.h:
+
+/home/mginhson/dev/vcpkg/installed/x64-linux/include/sqlite3.h:
 
 /usr/include/c++/11/bits/stl_multimap.h:
 

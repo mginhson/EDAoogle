@@ -10,6 +10,7 @@
 
 #include <iostream>
 #include <string>
+#include <cstring>
 #include <vector>
 #include <filesystem>
 #include <fstream>
@@ -41,28 +42,40 @@ int main(int argc,
     char *databaseFile = "index.db";
     sqlite3 *database;
     char *databaseErrorMessage;
-
-
+    string databaseName = "prettyEyes";
+    string placeholder;
     
     if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
     {
         cout << "Failure on sqlite_open()" << endl;
         return 1;
     }
-    //sqlite3_enable_load_extension(database, 0);
     
+    placeholder = "CREATE VIRTUAL TABLE " + databaseName + 
+    " USING fts5(title, path, body);";
 
     if (sqlite3_exec(database,
-        "CREATE VIRTUAL TABLE prettyEyes USING fts5(title, path, body);",
+        placeholder.c_str(),
         NULL,
         0,
         &databaseErrorMessage) != SQLITE_OK)
     {
         cout << sqlite3_errmsg(database) << endl;
-        return 1;
     }
 
-    cout << "working" << endl;
+    
+    cout << "Deleting previous entries from the table." << endl;
+    placeholder = "DELETE FROM " + databaseName;
+    if (sqlite3_exec(database,
+                     placeholder.c_str(),
+                     NULL,
+                     0,
+                     &databaseErrorMessage) != SQLITE_OK)
+    {
+         cout << "Error: " << sqlite3_errmsg(database) << endl;
+    }   
+
+    
 
     std::ifstream file;
     std::string pathName = "/home/mginhson/Desktop/EDA/EDAoogle/www/wiki"; 
@@ -76,7 +89,8 @@ int main(int argc,
 
        
         fileName = entry.path();
-        cout << fileName << endl;
+        
+        
         file.open(entry.path());
         
         
@@ -87,8 +101,24 @@ int main(int argc,
             body.append(reader);
             getline(file,reader,'>');
         }
-        
 
+        cout << body << endl;
+        string delim = " ";
+        delim[0]='"';
+        placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
+        " VALUES("  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
+        delim + entry.path().c_str()+ delim + " ," + "'" +body+ delim + " );";
+        
+        /*
+        if (sqlite3_exec(database,
+            placeholder.c_str(), 
+            NULL, 0, &databaseErrorMessage) != SQLITE_OK)
+        {
+            cout << "Error while inserting tokens into the table" << endl;
+            cout << databaseErrorMessage << endl;
+            return 1;
+        }
+        */
         file.close();
         
     }
