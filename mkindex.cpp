@@ -118,12 +118,12 @@ int main(int argc,
         std::regex regexToRemove2(std::string(1, '\"'));
         body = std::regex_replace(body, regexToRemove2, "");
 
-        cout << body << endl;
+        
         string delim = " ";
         delim[0]='"';
         placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
-        " VALUES("  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
-        delim + entry.path().c_str()+ delim + " ," + "'" +body+ delim + " );";
+        " VALUES( "  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
+        delim + entry.path().c_str()+ delim + " , " + delim +body+ delim + " );";
         
         
         
@@ -133,7 +133,7 @@ int main(int argc,
         {
             cout << "Error while inserting tokens into the table" << endl;
             cout << databaseErrorMessage << endl;
-            return 1;
+            
         }
         
         
