@@ -97,8 +97,9 @@ int main(int argc,
         
         while(!file.eof())
         {
-            getline(file,reader);           
+            getline(file,reader,'<');
             body.append(reader);
+            getline(file,reader,'>');
         }
 
         string delim = " ";
