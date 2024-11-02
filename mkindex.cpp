@@ -97,18 +97,17 @@ int main(int argc,
         
         while(!file.eof())
         {
-            getline(file,reader,'<');
+            getline(file,reader);           
             body.append(reader);
-            getline(file,reader,'>');
         }
 
-        cout << body << endl;
         string delim = " ";
         delim[0]='"';
         placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
         " VALUES("  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
         delim + entry.path().c_str()+ delim + " ," + "'" +body+ delim + " );";
         
+        cout << placeholder << endl;
         /*
         if (sqlite3_exec(database,
             placeholder.c_str(), 
