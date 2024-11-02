@@ -10,12 +10,14 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include <cstring>
 #include <vector>
 #include <filesystem>
 #include <fstream>
 #include <sqlite3.h>
 #include <sqlite3-vcpkg-config.h>
+#include <regex>
 
 using namespace std;
 
@@ -101,7 +103,14 @@ int main(int argc,
             body.append(reader);
             getline(file,reader,'>');
         }
+        std::regex pattern1("&#[0-9]{3};");
+        body = std::regex_replace(body, pattern1, "");
 
+        std::regex pattern2("&#[0-9]{4};");
+        body = std::regex_replace(body, pattern2, "");
+
+        body.erase(std::remove(body.begin(), body.end(), '\''), body.end());
+        body.erase(std::remove(body.begin(), body.end(), '\"'), body.end());
         cout << body << endl;
         string delim = " ";
         delim[0]='"';
