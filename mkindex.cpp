@@ -109,9 +109,16 @@ int main(int argc,
         std::regex pattern2("&#[0-9]{4};");
         body = std::regex_replace(body, pattern2, "");
 
-        body.erase(std::remove(body.begin(), body.end(), '\''), body.end());
-        body.erase(std::remove(body.begin(), body.end(), '\"'), body.end());
-        
+        std::regex regexToRemove1(std::string(1, '\''));
+
+        // Usar std::regex_replace para reemplazar las coincidencias con una cadena vacía
+        body = std::regex_replace(body, regexToRemove1, "");
+        //body.erase(std::remove(body.begin(), body.end(), '\''), body.end());
+        //body.erase(std::remove(body.begin(), body.end(), '\"'), body.end());
+        std::regex regexToRemove2(std::string(1, '\"'));
+        body = std::regex_replace(body, regexToRemove2, "");
+
+        cout << body << endl;
         string delim = " ";
         delim[0]='"';
         placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
