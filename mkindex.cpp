@@ -92,7 +92,7 @@ int main(int argc,
        
         fileName = entry.path();
         
-        
+        cout << fileName << endl;
         file.open(entry.path());
         
         
@@ -111,15 +111,15 @@ int main(int argc,
 
         body.erase(std::remove(body.begin(), body.end(), '\''), body.end());
         body.erase(std::remove(body.begin(), body.end(), '\"'), body.end());
-        cout << body << endl;
+        
         string delim = " ";
         delim[0]='"';
         placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
         " VALUES("  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
         delim + entry.path().c_str()+ delim + " ," + "'" +body+ delim + " );";
         
-        cout << placeholder << endl;
-        /*
+        
+        
         if (sqlite3_exec(database,
             placeholder.c_str(), 
             NULL, 0, &databaseErrorMessage) != SQLITE_OK)
@@ -128,7 +128,8 @@ int main(int argc,
             cout << databaseErrorMessage << endl;
             return 1;
         }
-        */
+        
+        
         file.close();
         
     }
