@@ -118,6 +118,7 @@ int main(int argc,
         " VALUES("  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
         delim + entry.path().c_str()+ delim + " ," + "'" +body+ delim + " );";
         
+        cout << placeholder << endl;
         /*
         if (sqlite3_exec(database,
             placeholder.c_str(), 
