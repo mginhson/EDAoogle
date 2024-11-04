@@ -4,7 +4,7 @@
  * @brief Makes a database index
  * @version 0.3
  *
- * @copyright Copyright (c) 2022-2024 Marc S. Ressl.
+ * @copyright Copyright (c) 2022-2024 Marc S. Ressl. 
  */
 
 
