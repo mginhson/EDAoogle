@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.16)
 
 project(EDAoogle)
 
+add_compile_definitions("SQLITE_ENABLE_FTS5")
+
 # Enable C++17
 set(CMAKE_CXX_STANDARD 17)
 

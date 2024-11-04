@@ -10,11 +10,14 @@
 
 #include <iostream>
 #include <string>
+#include <algorithm>
+#include <cstring>
 #include <vector>
 #include <filesystem>
 #include <fstream>
 #include <sqlite3.h>
 #include <sqlite3-vcpkg-config.h>
+#include <regex>
 
 using namespace std;
 
@@ -41,28 +44,40 @@ int main(int argc,
     char *databaseFile = "index.db";
     sqlite3 *database;
     char *databaseErrorMessage;
-
-
+    string databaseName = "prettyEyes";
+    string placeholder;
     
     if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
     {
         cout << "Failure on sqlite_open()" << endl;
         return 1;
     }
-    //sqlite3_enable_load_extension(database, 0);
     
+    placeholder = "CREATE VIRTUAL TABLE " + databaseName + 
+    " USING fts5(title, path, body);";
 
     if (sqlite3_exec(database,
-        "CREATE VIRTUAL TABLE prettyEyes USING fts5(title, path, body);",
+        placeholder.c_str(),
         NULL,
         0,
         &databaseErrorMessage) != SQLITE_OK)
     {
         cout << sqlite3_errmsg(database) << endl;
-        return 1;
     }
 
-    cout << "working" << endl;
+    
+    cout << "Deleting previous entries from the table." << endl;
+    placeholder = "DELETE FROM " + databaseName;
+    if (sqlite3_exec(database,
+                     placeholder.c_str(),
+                     NULL,
+                     0,
+                     &databaseErrorMessage) != SQLITE_OK)
+    {
+         cout << "Error: " << sqlite3_errmsg(database) << endl;
+    }   
+
+    
 
     std::ifstream file;
     std::string pathName = "/home/mginhson/Desktop/EDA/EDAoogle/www/wiki"; 
@@ -76,6 +91,7 @@ int main(int argc,
 
        
         fileName = entry.path();
+        
         cout << fileName << endl;
         file.open(entry.path());
         
@@ -87,8 +103,40 @@ int main(int argc,
             body.append(reader);
             getline(file,reader,'>');
         }
-        
+        std::regex pattern1("&#[0-9]{3};");
+        body = std::regex_replace(body, pattern1, "");
 
+        std::regex pattern2("&#[0-9]{4};");
+        body = std::regex_replace(body, pattern2, "");
+
+        std::regex regexToRemove1(std::string(1, '\''));
+
+        // Usar std::regex_replace para reemplazar las coincidencias con una cadena vacía
+        body = std::regex_replace(body, regexToRemove1, "");
+        //body.erase(std::remove(body.begin(), body.end(), '\''), body.end());
+        //body.erase(std::remove(body.begin(), body.end(), '\"'), body.end());
+        std::regex regexToRemove2(std::string(1, '\"'));
+        body = std::regex_replace(body, regexToRemove2, "");
+
+        
+        string delim = " ";
+        delim[0]='"';
+        placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
+        " VALUES( "  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
+        delim + entry.path().c_str()+ delim + " , " + delim +body+ delim + " );";
+        
+        
+        
+        if (sqlite3_exec(database,
+            placeholder.c_str(), 
+            NULL, 0, &databaseErrorMessage) != SQLITE_OK)
+        {
+            cout << "Error while inserting tokens into the table" << endl;
+            cout << databaseErrorMessage << endl;
+            
+        }
+        
+        
         file.close();
         
     }
