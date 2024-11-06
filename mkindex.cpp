@@ -39,22 +39,22 @@ static int onDatabaseEntry(void *userdata,
 }
 
 int main(int argc,
-         const char *argv[])
+    const char* argv[])
 {
-    char *databaseFile = "index.db";
-    sqlite3 *database;
-    char *databaseErrorMessage;
+    char* databaseFile = "index.db";
+    sqlite3* database;
+    char* databaseErrorMessage;
     string databaseName = "prettyEyes";
     string placeholder;
-    
+
     if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
     {
         cout << "Failure on sqlite_open()" << endl;
         return 1;
     }
-    
-    placeholder = "CREATE VIRTUAL TABLE " + databaseName + 
-    " USING fts5(title, path, body);";
+
+    placeholder = "CREATE VIRTUAL TABLE " + databaseName +
+        " USING fts5(title, path, body);";
 
     if (sqlite3_exec(database,
         placeholder.c_str(),
@@ -63,38 +63,43 @@ int main(int argc,
         &databaseErrorMessage) != SQLITE_OK)
     {
         cout << sqlite3_errmsg(database) << endl;
-        
+
     }
 
-    
+
     cout << "Deleting previous entries from the table." << endl;
     placeholder = "DELETE FROM " + databaseName;
     if (sqlite3_exec(database,
-                     placeholder.c_str(),
-                     NULL,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
+        placeholder.c_str(),
+        NULL,
+        0,
+        &databaseErrorMessage) != SQLITE_OK)
     {
-         cout << "Error: " << sqlite3_errmsg(database) << endl;
-         
-    }   
+        cout << "Error: " << sqlite3_errmsg(database) << endl;
 
-    
+    }
+
+
 
     std::ifstream file;
-    std::string pathName = "C:\\Users\\mateo\\Desktop\\level5\\EDAoogle\\www\\wiki"; 
-    std::string reader, body, fileName;
+    std::string pathName = "C:\\Users\\mateo\\Desktop\\level5\\EDAoogle\\www\\wiki";
+    std::string reader, body, fileName, filePath;
 
 
-    for (const auto & entry : filesystem::directory_iterator(pathName))
+    for (const auto& entry : filesystem::directory_iterator(pathName))
     {
         reader.clear();
         body.clear();
 
-       
-        fileName = entry.path().string();
-        
-        cout << fileName << endl;
+
+        filePath = entry.path().string();
+
+
+        fileName = filePath.substr(filePath.find_last_of('\\') + 1);
+        fileName.erase(fileName.find_last_of('.'));
+        //fileName.replace(fileName.begin(), fileName.end(), '_', ' ');
+        regex guionBajo("_");
+        fileName = regex_replace(fileName, guionBajo, " ");
         file.open(entry.path());
         
         
@@ -105,6 +110,8 @@ int main(int argc,
             body.append(reader);
             getline(file,reader,'>');
         }
+
+        // Eliminación de caractéres UTF mediante regex ()
         std::regex pattern1("&#[0-9]{3};");
         body = std::regex_replace(body, pattern1, "");
 
@@ -113,19 +120,19 @@ int main(int argc,
 
         std::regex regexToRemove1(std::string(1, '\''));
 
-        // Usar std::regex_replace para reemplazar las coincidencias con una cadena vacía
+        
         body = std::regex_replace(body, regexToRemove1, "");
-        //body.erase(std::remove(body.begin(), body.end(), '\''), body.end());
-        //body.erase(std::remove(body.begin(), body.end(), '\"'), body.end());
+    
         std::regex regexToRemove2(std::string(1, '\"'));
         body = std::regex_replace(body, regexToRemove2, "");
 
         
+        cout << fileName << endl;
         string delim = " ";
         delim[0]='"';
         placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
-        " VALUES( "  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
-        delim + fileName + delim + " , " + delim + body + delim + " );";
+        " VALUES( "  +delim +fileName +delim + ", " +
+        delim + filePath + delim + " , " + delim + body + delim + " );";
         
         
         

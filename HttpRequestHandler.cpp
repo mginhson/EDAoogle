@@ -15,12 +15,19 @@
 #include <sqlite3.h>
 #include <regex>
 using namespace std;
-
-
+typedef struct {
+    string title;
+    string path;
+   
+} Page_t;
+/*
+* @brief Guarda los valores de titulo y el link de una fila
+* @param columnSize cantidad de columnas de una fila
+* @param columns valores las columnas de una fila
+* @param columnsName nombres de las columnas de una fila
+*/
 int selectPages(void* pointer, int columnSize, char** columns, char**columnsName) {
-    //for (int i = 0; i < columnSize; i++) {
-       // cout << columns[0];
-        static_cast<vector<string>*>(pointer)->push_back(columns[0]);
+    static_cast<vector<Page_t>*>(pointer)->push_back({ columns[0], columns[1]});
     
     return 0;
 }
@@ -103,9 +110,8 @@ bool HttpRequestHandler::handleRequest(string url,
         </div>\
         ");
         
-        // YOUR JOB: fill in results
         float searchTime = 0.1F;
-        vector<string> results;
+        vector<Page_t> results;
 
         char* databaseFile = "index.db";
         sqlite3* database;
@@ -120,17 +126,12 @@ bool HttpRequestHandler::handleRequest(string url,
             return 1;
         }
         
-        //std::regex espacio_regex(" ");
-        //std::string cadena_final = std::regex_replace(searchString, espacio_regex, " OR ");
-
-
+        // Inicializamos temporizador
         auto start = chrono::system_clock::now();
-        //string searchArgument = "SELECT title, url bm25(nombre_base_de_datos) AS rank FROM libros WHERE libros MATCH '" + searchString + "' ORDER BY rank;";
+        // Formación del argumento de busqueda mediante el uso de bm25
         string searchArgument = "SELECT title, path, bm25(prettyEyes) AS rank FROM prettyEyes WHERE body MATCH '" + searchString + "' ORDER BY rank;";
 
-       
-        vector <string> queryData;
-            // pop_back();
+        // Consulta a la base de datos
         if(sqlite3_exec(database,
             searchArgument.c_str(),
             selectPages,
@@ -138,16 +139,18 @@ bool HttpRequestHandler::handleRequest(string url,
             &databaseErrorMessage) != SQLITE_OK)
             cout << "Error: " << sqlite3_errmsg(database) << endl;
         
+        
         auto end = chrono::system_clock::now();
         chrono::duration<long double> duration = end - start;
         searchTime = duration.count();
+
         // Print search results
         responseString += "<div class=\"results\">" + to_string(results.size()) +
                           " results (" + to_string(searchTime) + " seconds):</div>";
         for (auto& result : results) {
             responseString += "<div class=\"result\"><a href=\"" +
-                result + "\">" + result + "</a></div>";
-            cout << result;
+                result.path + "\">" + result.title + "</a></div>";
+            ;
         }
 
         // Trailer
