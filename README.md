@@ -18,6 +18,7 @@ El código se divide en dos partes: Un módulo que arma el índice y otro que co
   Se utilizo la libreria chronos para llevar el tiempo de consulta a la base de datos.
   Cada respuesta se da con su respectivo titulo y tiene un link a la página correspondiente.
   EL bm25() permite realizar operaciones de OR y AND.
+  Al poner "dominios anidados" se obtiene Evolución Biológica.
   
 
   
