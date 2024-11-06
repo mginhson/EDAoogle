@@ -13,22 +13,15 @@
 #include <chrono>
 #include "HttpRequestHandler.h"
 #include <sqlite3.h>
+#include <regex>
 using namespace std;
-typedef struct {
-    char* path;
-    char* title;
-    char* body;
-} Page_t;
+
 
 int selectPages(void* pointer, int columnSize, char** columns, char**columnsName) {
-    for (int i = 0; i < columnSize; i++) {
-        
-        static_cast<vector<Page_t>*>(pointer)->push_back({
-            columns[0], // ¿Path?
-            columns[1], // ¿Title?
-            columns[2], // ¿Body?
-        });
-    }
+    //for (int i = 0; i < columnSize; i++) {
+       // cout << columns[0];
+        static_cast<vector<string>*>(pointer)->push_back(columns[0]);
+    
     return 0;
 }
 
@@ -126,31 +119,36 @@ bool HttpRequestHandler::handleRequest(string url,
 
             return 1;
         }
-        auto start = chrono::system_clock::now();
-        string searchArgument = "SELECT title, url bm25(nombre_base_de_datos) AS rank FROM libros WHERE libros MATCH '" + searchString + "' ORDER BY rank;";
-        auto end = chrono::system_clock::now();
+        
+        //std::regex espacio_regex(" ");
+        //std::string cadena_final = std::regex_replace(searchString, espacio_regex, " OR ");
 
-        chrono::duration<long double> duration = end - start;
-        searchTime = duration.count();
-        vector <Page_t> queryData;
+
+        auto start = chrono::system_clock::now();
+        //string searchArgument = "SELECT title, url bm25(nombre_base_de_datos) AS rank FROM libros WHERE libros MATCH '" + searchString + "' ORDER BY rank;";
+        string searchArgument = "SELECT title, path, bm25(prettyEyes) AS rank FROM prettyEyes WHERE body MATCH '" + searchString + "' ORDER BY rank;";
+
+       
+        vector <string> queryData;
             // pop_back();
         if(sqlite3_exec(database,
             searchArgument.c_str(),
             selectPages,
-            &queryData,
+            &results,
             &databaseErrorMessage) != SQLITE_OK)
             cout << "Error: " << sqlite3_errmsg(database) << endl;
-        int i = 0;
-        for (auto& page : queryData) {
-            results[i] = queryData[i].path;
-            i++;
-        }
+        
+        auto end = chrono::system_clock::now();
+        chrono::duration<long double> duration = end - start;
+        searchTime = duration.count();
         // Print search results
         responseString += "<div class=\"results\">" + to_string(results.size()) +
                           " results (" + to_string(searchTime) + " seconds):</div>";
-        for (auto &result : results)
+        for (auto& result : results) {
             responseString += "<div class=\"result\"><a href=\"" +
-                              result + "\">" + result + "</a></div>";
+                result + "\">" + result + "</a></div>";
+            cout << result;
+        }
 
         // Trailer
         responseString += "    </article>\

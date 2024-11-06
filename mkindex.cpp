@@ -63,6 +63,7 @@ int main(int argc,
         &databaseErrorMessage) != SQLITE_OK)
     {
         cout << sqlite3_errmsg(database) << endl;
+        
     }
 
     
@@ -75,12 +76,13 @@ int main(int argc,
                      &databaseErrorMessage) != SQLITE_OK)
     {
          cout << "Error: " << sqlite3_errmsg(database) << endl;
+         
     }   
 
     
 
     std::ifstream file;
-    std::string pathName = "/home/mginhson/Desktop/EDA/EDAoogle/www/wiki"; 
+    std::string pathName = "C:\\Users\\mateo\\Desktop\\level5\\EDAoogle\\www\\wiki"; 
     std::string reader, body, fileName;
 
 
@@ -90,7 +92,7 @@ int main(int argc,
         body.clear();
 
        
-        fileName = entry.path();
+        fileName = entry.path().string();
         
         cout << fileName << endl;
         file.open(entry.path());
@@ -123,7 +125,7 @@ int main(int argc,
         delim[0]='"';
         placeholder = "INSERT INTO " + databaseName + " (title, path, body)" + 
         " VALUES( "  +delim +fileName.substr(fileName.find_last_of('/')+1)+delim + ", " +
-        delim + entry.path().c_str()+ delim + " , " + delim +body+ delim + " );";
+        delim + fileName + delim + " , " + delim + body + delim + " );";
         
         
         
@@ -135,6 +137,7 @@ int main(int argc,
             cout << databaseErrorMessage << endl;
             
         }
+       
         
         
         file.close();
@@ -221,5 +224,6 @@ int main(int argc,
     sqlite3_close(database);
 
     */
+    cout << "Terminamos de crear la base de datos";
 }
 
