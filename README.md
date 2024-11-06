@@ -15,6 +15,9 @@ El código se divide en dos partes: Un módulo que arma el índice y otro que co
   Es necesario modificar la variable "path" con la dirección absoluta del directorio /www .
   Al recibir el string de entrada quitamos las comillas para evitar las inyecciones de SQL.
   Utilizamos el algoritmo bm25() proveído por fts5 para acceder a los resultados mas conectados con la consulta realizada.
+  Se utilizo la libreria chronos para llevar el tiempo de consulta a la base de datos.
+  Cada respuesta se da con su respectivo titulo y tiene un link a la página correspondiente.
+  EL bm25() permite realizar operaciones de OR y AND.
   
 
   
