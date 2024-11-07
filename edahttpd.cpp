@@ -20,48 +20,48 @@ using namespace std;
 
 void printHelp()
 {
-    cout << "Usage: edahttpd -h WWW_PATH [-p PORT] " << endl;
+	cout << "Usage: edahttpd -h WWW_PATH [-p PORT] " << endl;
 };
 
-int main(int argc, const char *argv[])
+int main(int argc, const char* argv[])
 {
-    CommandLineParser parser(argc, argv);
+	CommandLineParser parser(argc, argv);
 
-    // Configuration
-    int port = 8000;
-    string wwwPath;
+	// Configuration
+	int port = 8000;
+	string wwwPath;
 
-    // Parse command line
-    if (!parser.hasOption("-h"))
-    {
-        cout << "error: WWW_PATH must be specified." << endl;
+	// Parse command line
+	if (!parser.hasOption("-h"))
+	{
+		cout << "error: WWW_PATH must be specified." << endl;
 
-        printHelp();
+		printHelp();
 
-        return 1;
-    }
-   
-    wwwPath = parser.getOption("-h");
+		return 1;
+	}
 
-    if (parser.hasOption("-p"))
-        port = stoi(parser.getOption("-p"));
+	wwwPath = parser.getOption("-h");
 
-    // Start server
-    HttpServer server(port);
+	if (parser.hasOption("-p"))
+		port = stoi(parser.getOption("-p"));
 
-    HttpRequestHandler edaOogleHttpRequestHandler(wwwPath);
-    server.setHttpRequestHandler(&edaOogleHttpRequestHandler);
+	// Start server
+	HttpServer server(port);
 
-    if (server.isRunning())
-    {
-        cout << "Running server..." << endl;
+	HttpRequestHandler edaOogleHttpRequestHandler(wwwPath);
+	server.setHttpRequestHandler(&edaOogleHttpRequestHandler);
 
-        // Wait for keyboard entry
-        char value;
-        cin >> value;
+	if (server.isRunning())
+	{
+		cout << "Running server..." << endl;
 
-        
+		// Wait for keyboard entry
+		char value;
+		cin >> value;
 
-        cout << "Stopping server..." << endl;
-    }
+
+
+		cout << "Stopping server..." << endl;
+	}
 }

@@ -18,8 +18,8 @@
 using namespace std;
 
 typedef struct {
-    string title;
-    string path;
+	string title;
+	string path;
 } Page_t;
 /*
 * @brief Guarda los valores de titulo y el link de una fila
@@ -27,16 +27,16 @@ typedef struct {
 * @param columns valores las columnas de una fila
 * @param columnsName nombres de las columnas de una fila
 */
-int callbackForQuery(void* pointer, int columnSize, char** columns, char**columnsName) {
-    static_cast<vector<Page_t>*>(pointer)->push_back({ columns[0], columns[1]});
-    
-    return 0;
+int callbackForQuery(void* pointer, int columnSize, char** columns, char** columnsName) {
+	static_cast<vector<Page_t>*>(pointer)->push_back({ columns[0], columns[1] });
+
+	return 0;
 }
 
 
 HttpRequestHandler::HttpRequestHandler(string homePath)
 {
-    this->homePath = homePath;
+	this->homePath = homePath;
 }
 
 /**
@@ -47,47 +47,47 @@ HttpRequestHandler::HttpRequestHandler(string homePath)
  * @return true URL valid
  * @return false URL invalid
  */
-bool HttpRequestHandler::serve(string url, vector<char> &response)
+bool HttpRequestHandler::serve(string url, vector<char>& response)
 {
-    // Blocks directory traversal
-    // e.g. https://www.example.com/show_file.php?file=../../MyFile
-    // * Builds absolute local path from url
-    // * Checks if absolute local path is within home path
-    auto homeAbsolutePath = filesystem::absolute(homePath);
-    auto relativePath = homeAbsolutePath / url.substr(1);
-    string path = filesystem::absolute(relativePath.make_preferred()).string();
+	// Blocks directory traversal
+	// e.g. https://www.example.com/show_file.php?file=../../MyFile
+	// * Builds absolute local path from url
+	// * Checks if absolute local path is within home path
+	auto homeAbsolutePath = filesystem::absolute(homePath);
+	auto relativePath = homeAbsolutePath / url.substr(1);
+	string path = filesystem::absolute(relativePath.make_preferred()).string();
 
-    if (path.substr(0, homeAbsolutePath.string().size()) != homeAbsolutePath)
-        return false;
+	if (path.substr(0, homeAbsolutePath.string().size()) != homeAbsolutePath)
+		return false;
 
-    // Serves file
-    ifstream file(path);
-    if (file.fail())
-        return false;
+	// Serves file
+	ifstream file(path);
+	if (file.fail())
+		return false;
 
-    file.seekg(0, ios::end);
-    size_t fileSize = file.tellg();
-    file.seekg(0, ios::beg);
+	file.seekg(0, ios::end);
+	size_t fileSize = file.tellg();
+	file.seekg(0, ios::beg);
 
-    response.resize(fileSize);
-    file.read(response.data(), fileSize);
+	response.resize(fileSize);
+	file.read(response.data(), fileSize);
 
-    return true;
+	return true;
 }
 
 bool HttpRequestHandler::handleRequest(string url,
-                                               HttpArguments arguments,
-                                               vector<char> &response)
+	HttpArguments arguments,
+	vector<char>& response)
 {
-    string searchPage = "/search";
-    if (url.substr(0, searchPage.size()) == searchPage)
-    {
-        string searchString;
-        if (arguments.find("q") != arguments.end())
-            searchString = arguments["q"];
+	string searchPage = "/search";
+	if (url.substr(0, searchPage.size()) == searchPage)
+	{
+		string searchString;
+		if (arguments.find("q") != arguments.end())
+			searchString = arguments["q"];
 
-        // Header
-        string responseString = string("<!DOCTYPE html>\
+		// Header
+		string responseString = string("<!DOCTYPE html>\
 <html>\
 \
 <head>\
@@ -106,69 +106,69 @@ bool HttpRequestHandler::handleRequest(string url,
         <div class=\"search\">\
             <form action=\"/search\" method=\"get\">\
                 <input type=\"text\" name=\"q\" value=\"" +
-                                       searchString + "\" autofocus>\
+			searchString + "\" autofocus>\
             </form>\
         </div>\
         ");
-        
-        float searchTime = 0.1F;
-        vector<Page_t> results;
 
-        char* databaseFile = "index.db";
-        sqlite3* database;
-        char* databaseErrorMessage;
-        
-        // Open database file
-        cout << "Opening database..." << endl;
-        if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
-        {
-            cout << "Can't open database: " << sqlite3_errmsg(database) << endl;
+		float searchTime = 0.1F;
+		vector<Page_t> results;
 
-            return 1;
-        }
-        // Eliminamos las comillas para evitar las inyecciones SQL
-        std::regex comillas_regex("[\"']");
+		char* databaseFile = "index.db";
+		sqlite3* database;
+		char* databaseErrorMessage;
 
-        // Reemplazar todas las comillas por una cadena vacía
-        searchString = std::regex_replace(searchString, comillas_regex, " ");
-        // Inicializamos temporizador
-        auto start = chrono::system_clock::now();
-        // Formación del argumento de busqueda mediante el uso de bm25
-        string searchArgument = "SELECT title, path, bm25(prettyEyes) AS rank FROM prettyEyes WHERE body MATCH '" + searchString + "' ORDER BY rank;";
+		// Open database file
+		cout << "Opening database..." << endl;
+		if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
+		{
+			cout << "Can't open database: " << sqlite3_errmsg(database) << endl;
 
-        // Consulta a la base de datos
-        if(sqlite3_exec(database,
-            searchArgument.c_str(),
-            callbackForQuery,
-            &results,
-            &databaseErrorMessage) != SQLITE_OK)
-            cout << "Error: " << sqlite3_errmsg(database) << endl;
-        
-        
-        auto end = chrono::system_clock::now();
-        chrono::duration<long double> duration = end - start;
-        searchTime = duration.count();
+			return 1;
+		}
+		// Eliminamos las comillas para evitar las inyecciones SQL
+		std::regex comillas_regex("[\"']");
 
-        // Print search results
-        responseString += "<div class=\"results\">" + to_string(results.size()) +
-                          " results (" + to_string(searchTime) + " seconds):</div>";
-        for (auto& result : results) {
-            responseString += "<div class=\"result\"><a href=\"" +
-                result.path + "\">" + result.title + "</a></div>";
-            ;
-        }
+		// Reemplazar todas las comillas por una cadena vacía
+		searchString = std::regex_replace(searchString, comillas_regex, " ");
+		// Inicializamos temporizador
+		auto start = chrono::system_clock::now();
+		// Formación del argumento de busqueda mediante el uso de bm25
+		string searchArgument = "SELECT title, path, bm25(prettyEyes) AS rank FROM prettyEyes WHERE body MATCH '" + searchString + "' ORDER BY rank;";
 
-        // Trailer
-        responseString += "    </article>\
+		// Consulta a la base de datos
+		if (sqlite3_exec(database,
+			searchArgument.c_str(),
+			callbackForQuery,
+			&results,
+			&databaseErrorMessage) != SQLITE_OK)
+			cout << "Error: " << sqlite3_errmsg(database) << endl;
+
+
+		auto end = chrono::system_clock::now();
+		chrono::duration<long double> duration = end - start;
+		searchTime = duration.count();
+
+		// Print search results
+		responseString += "<div class=\"results\">" + to_string(results.size()) +
+			" results (" + to_string(searchTime) + " seconds):</div>";
+		for (auto& result : results) {
+			responseString += "<div class=\"result\"><a href=\"" +
+				result.path + "\">" + result.title + "</a></div>";
+			;
+		}
+
+		// Trailer
+		responseString += "    </article>\
 </body>\
 </html>";
 
-        response.assign(responseString.begin(), responseString.end());
+		response.assign(responseString.begin(), responseString.end());
 
-        return true;
-    }
-    else
-        return serve(url, response);
+		return true;
+	}
+	else
+		return serve(url, response);
 
-    return false;
+	return false;
 }
