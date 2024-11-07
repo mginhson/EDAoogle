@@ -1,6 +1,7 @@
 /**
  * @file mkindex.cpp
  * @author Marc S. Ressl
+ * @modifiers Sosa, Mateo and Ginhson, Matteo
  * @brief Makes a database index
  * @version 0.3
  *
@@ -38,6 +39,9 @@ static int onDatabaseEntry(void *userdata,
     return 0;
 }
 
+//USER SHOULD MODIFY THIS!!!!
+std::string pathName = "C:\\Users\\mateo\\Desktop\\level5\\EDAoogle\\www\\wiki";
+
 int main(int argc,
     const char* argv[])
 {
@@ -47,14 +51,20 @@ int main(int argc,
     string databaseName = "prettyEyes";
     string placeholder;
 
+    //First, open the database.
     if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
     {
         cout << "Failure on sqlite_open()" << endl;
         return 1;
     }
-
+    
+    /**
+    * We create the virtual table using the command on the Placeholder.
+    * If it was already created, we delete all the previous entries.
+    */
     placeholder = "CREATE VIRTUAL TABLE " + databaseName +
         " USING fts5(title, path, body);";
+
 
     if (sqlite3_exec(database,
         placeholder.c_str(),
@@ -64,28 +74,37 @@ int main(int argc,
     {
         cout << sqlite3_errmsg(database) << endl;
 
+        cout << "Deleting previous entries from the table." << endl;
+
+        placeholder = "DELETE FROM " + databaseName;
+        if (sqlite3_exec(database,
+            placeholder.c_str(),
+            NULL,
+            0,
+            &databaseErrorMessage) != SQLITE_OK)
+        {
+            cout << "Error: " << sqlite3_errmsg(database) << endl;
+
+        }
     }
 
-
-    cout << "Deleting previous entries from the table." << endl;
-    placeholder = "DELETE FROM " + databaseName;
-    if (sqlite3_exec(database,
-        placeholder.c_str(),
-        NULL,
-        0,
-        &databaseErrorMessage) != SQLITE_OK)
-    {
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-
-    }
+    
+    
 
 
 
     std::ifstream file;
-    std::string pathName = "C:\\Users\\mateo\\Desktop\\level5\\EDAoogle\\www\\wiki";
+    
     std::string reader, body, fileName, filePath;
 
-
+    /**
+    * For every file on the directory, read the whole body, extracting the HTML characters, "<>".
+    * Then, with Regular Expressions, delete the special characters, that were parsed
+    * with the format "&#   ;". After that, again with Regular Expressions, strip the 
+    * single and double quotes, since they are interpreted as Command starts on any string passed
+    * to SQLite3. 
+    * Finally, concatenate everything into a single Command string, 
+    */
     for (const auto& entry : filesystem::directory_iterator(pathName))
     {
         reader.clear();
@@ -97,13 +116,13 @@ int main(int argc,
 
         fileName = filePath.substr(filePath.find_last_of('\\') + 1);
         fileName.erase(fileName.find_last_of('.'));
-        //fileName.replace(fileName.begin(), fileName.end(), '_', ' ');
+        
         regex guionBajo("_");
         fileName = regex_replace(fileName, guionBajo, " ");
         file.open(entry.path());
         
         
-        
+        //Extract while stripping the HTML bodies.      
         while(!file.eof())
         {
             getline(file,reader,'<');
@@ -154,83 +173,6 @@ int main(int argc,
     
 
   
-    /*
-    // Open database file
-    cout << "Opening database..." << endl;
-    if (sqlite3_open(databaseFile, &database) != SQLITE_OK)
-    {
-        cout << "Can't open database: " << sqlite3_errmsg(database) << endl;
-
-        return 1;
-    }
-
-    // Create a sample table
-    cout << "Creating table..." << endl;
-    if (sqlite3_exec(database,
-                     "CREATE TABLE room_occupation "
-                     "(id INTEGER PRIMARY KEY,"
-                     "room varchar DEFAULT NULL,"
-                     "reserved_from DATETIME,"
-                     "reserved_until DATETIME);",
-                     NULL,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-
-    // Delete previous entries if table already existed
-    cout << "Deleting previous entries..." << endl;
-    if (sqlite3_exec(database,
-                     "DELETE FROM room_occupation;",
-                     NULL,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-
-    // Create sample entries
-    cout << "Creating sample entries..." << endl;
-    if (sqlite3_exec(database,
-                     "INSERT INTO room_occupation (room, reserved_from, reserved_until) VALUES "
-                     "('401F','2022-03-03 15:00:00','2022-03-03 16:00:00');",
-                     NULL,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-    if (sqlite3_exec(database,
-                     "INSERT INTO room_occupation (room, reserved_from, reserved_until) VALUES "
-                     "('501F','2022-03-03 15:00:00','2022-03-03 17:00:00');",
-                     NULL,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-    if (sqlite3_exec(database,
-                     "INSERT INTO room_occupation (room, reserved_from, reserved_until) VALUES "
-                     "('001R','2022-03-03 15:00:00','2022-03-03 16:30:00');",
-                     NULL,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-    if (sqlite3_exec(database,
-                     "INSERT INTO room_occupation (room, reserved_from, reserved_until) VALUES "
-                     "('1001F','2022-03-03 15:30:00','2022-03-03 16:30:00');",
-                     NULL,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-
-    // Fetch entries
-    cout << "Fetching entries..." << endl;
-    if (sqlite3_exec(database,
-                     "SELECT * from room_occupation;",
-                     onDatabaseEntry,
-                     0,
-                     &databaseErrorMessage) != SQLITE_OK)
-        cout << "Error: " << sqlite3_errmsg(database) << endl;
-
-    // Close database
-    cout << "Closing database..." << endl;
-    sqlite3_close(database);
-
-    */
     cout << "Terminamos de crear la base de datos";
 }
 

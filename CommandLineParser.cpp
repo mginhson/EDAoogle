@@ -1,6 +1,7 @@
 /**
  * @file CommandLineParser.h
  * @author Marc S. Ressl
+ * @modifiers Sosa, Mateo and Ginhson, Matteo
  * @brief Quick and dirty command line parser
  * @version 0.3
  *

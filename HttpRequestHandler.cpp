@@ -1,6 +1,7 @@
 /**
  * @file HttpRequestHandler.h
  * @author Marc S. Ressl
+ * @modifiers Sosa, Mateo and Ginhson, Matteo
  * @brief EDAoggle search engine
  * @version 0.3
  *
@@ -15,10 +16,10 @@
 #include <sqlite3.h>
 #include <regex>
 using namespace std;
+
 typedef struct {
     string title;
     string path;
-   
 } Page_t;
 /*
 * @brief Guarda los valores de titulo y el link de una fila
@@ -26,7 +27,7 @@ typedef struct {
 * @param columns valores las columnas de una fila
 * @param columnsName nombres de las columnas de una fila
 */
-int selectPages(void* pointer, int columnSize, char** columns, char**columnsName) {
+int callbackForQuery(void* pointer, int columnSize, char** columns, char**columnsName) {
     static_cast<vector<Page_t>*>(pointer)->push_back({ columns[0], columns[1]});
     
     return 0;
@@ -125,7 +126,11 @@ bool HttpRequestHandler::handleRequest(string url,
 
             return 1;
         }
-        
+        // Eliminamos las comillas para evitar las inyecciones SQL
+        std::regex comillas_regex("[\"']");
+
+        // Reemplazar todas las comillas por una cadena vacía
+        searchString = std::regex_replace(searchString, comillas_regex, " ");
         // Inicializamos temporizador
         auto start = chrono::system_clock::now();
         // Formación del argumento de busqueda mediante el uso de bm25
@@ -134,7 +139,7 @@ bool HttpRequestHandler::handleRequest(string url,
         // Consulta a la base de datos
         if(sqlite3_exec(database,
             searchArgument.c_str(),
-            selectPages,
+            callbackForQuery,
             &results,
             &databaseErrorMessage) != SQLITE_OK)
             cout << "Error: " << sqlite3_errmsg(database) << endl;

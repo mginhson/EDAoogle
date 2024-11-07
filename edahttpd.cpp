@@ -1,6 +1,7 @@
 /**
  * @file edahttpd.cpp
  * @author Marc S. Ressl
+ * @modifiers Sosa, Mateo and Ginhson, Matteo
  * @brief Manages the edahttpd server
  * @version 0.3
  *
